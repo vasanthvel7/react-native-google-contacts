@@ -143,5 +143,9 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "g": "^2.0.1",
+    "react-native-cli": "^2.0.1"
   }
 }

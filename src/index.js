@@ -17,6 +17,9 @@ const GoogleContacts = NativeModules.GoogleContacts
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return GoogleContacts.multiply(a, b);
+export function getContacts(token) {
+  return GoogleContacts.getContact(token);
+}
+export function getOtherContacts(token) {
+  return GoogleContacts.getOtherContact(token);
 }
