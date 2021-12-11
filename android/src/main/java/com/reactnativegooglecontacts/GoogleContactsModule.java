@@ -1,7 +1,5 @@
 package com.reactnativegooglecontacts;
 import androidx.annotation.NonNull;
-
-import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -10,32 +8,23 @@ import com.facebook.react.module.annotations.ReactModule;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
-import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
-import com.facebook.react.bridge.WritableNativeMap;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.services.people.v1.PeopleService;
 import com.google.api.services.people.v1.model.EmailAddress;
@@ -47,18 +36,8 @@ import com.google.api.services.people.v1.model.PhoneNumber;
 import com.google.gdata.util.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
-import com.google.gson.Gson;
-import com.reactnativegooglecontacts.R;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 @ReactModule(name = GoogleContactsModule.NAME)
 public class GoogleContactsModule extends ReactContextBaseJavaModule {
   public static final String NAME = "GoogleContacts";
@@ -70,8 +49,8 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
   Intent signInIntent;
   String ClientId;
   String AppId;
-  String Appname;
   String Type;
+  String contactnextPageToken=null;
   String nextPageToken=null;
   Promise EmailListReturn;
   ListOtherContactsResponse res;
@@ -170,39 +149,35 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
   }
   public void fetchContacts(String token){
     try {
-      JSONArray arr = new JSONArray();
       WritableMap contactList = Arguments.createMap();
       WritableArray array = new WritableNativeArray();
-      res = peopleService.otherContacts().list()
-        .setReadMask("emailAddresses,names")
-        .setRequestSyncToken(true)
-        .setPageToken(token)
+      ListConnectionsResponse response = peopleService.people().connections()
+        .list("people/me")
+        .setPersonFields(
+          "addresses,ageRanges,birthdays,coverPhotos,emailAddresses,genders,metadata,names,nicknames,occupations,organizations,phoneNumbers,photos,urls")
         .execute();
-      contactList.putString("nextPageToken",res.getNextPageToken());
-      nextPageToken=res.getNextPageToken();
-      Log.d(TAG, "fetchOtherContacts: nextpagetoken"+res.getNextPageToken());
-      Log.d(TAG, "fetchOtherContacts: reacttoken"+token);
-      Log.d(TAG, "doInBackground: TOTALCONTACT"+res.getOtherContacts().size());
-      List<Person> otherContacts = res.getOtherContacts();
-      Log.d(TAG, "fetchOtherContacts: LIST PERUSU"+res.getOtherContacts());
-      Log.d(TAG, "fetchOtherContacts: LIST otherContacts"+otherContacts);
-      for (Person person : otherContacts) {
-        List<EmailAddress> emailAddresses = person.getEmailAddresses();
+      List<Person> connections = response.getConnections();
+      contactList.putString("nextPageToken",response.getNextPageToken());
+      contactnextPageToken=response.getNextPageToken();
+      List<Person> Contacts = response.getConnections();
+      for (Person person : Contacts) {
+
+        List<PhoneNumber> phoneNumbers = person.getPhoneNumbers();
         List<Name> names = person.getNames();
         if (!person.isEmpty()) {
-          if (emailAddresses != null)
-            for (EmailAddress emailAddress : emailAddresses) {
+          if (phoneNumbers != null)
+            for (PhoneNumber phonenumbers : phoneNumbers) {
               WritableMap map = Arguments.createMap();
               if (names != null) {
                 for (Name name : names) {
                   map.putString("name",name.getDisplayName());
-                  map.putString("email",emailAddress.getValue());
+                  map.putString("email",phonenumbers.getValue());
                   array.pushMap(map);
                 }
               }
               else {
-                map.putString("name","null");
-                map.putString("email",emailAddress.getValue());
+                map.putString("name","unknown");
+                map.putString("email",phonenumbers.getValue());
                 array.pushMap(map);
               }
 
@@ -227,7 +202,6 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
   }
   public void fetchOtherContacts(String token){
     try {
-      JSONArray arr = new JSONArray();
       WritableMap contactList = Arguments.createMap();
       WritableArray array = new WritableNativeArray();
       res = peopleService.otherContacts().list()
