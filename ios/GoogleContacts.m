@@ -6,7 +6,7 @@
 RCT_EXPORT_MODULE()
 
 NSString *accessToken;
-NSString *clientID = @"749429188201-hr5vbe4pr5j0pq2ghg0el9abp03hqmck.apps.googleusercontent.com";
+NSString *clientID = @"[[IOS-CLIENT-ID]]";
 RCT_EXPORT_METHOD(getContact:(NSString *)token
                   resolver:(RCTPromiseResolveBlock)resolve
                                     rejecter:(RCTPromiseRejectBlock)reject

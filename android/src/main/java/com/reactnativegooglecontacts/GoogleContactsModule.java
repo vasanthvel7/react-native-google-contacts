@@ -119,7 +119,6 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
         .list("people/me")
         .setPersonFields(
           "addresses,ageRanges,birthdays,coverPhotos,emailAddresses,genders,metadata,names,nicknames,occupations,organizations,phoneNumbers,photos,urls")
-        .setRequestSyncToken(true)
         .setPageToken(token)
         .setPageSize(45)
         .execute();
@@ -136,18 +135,25 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
 
         List<PhoneNumber> phoneNumbers = person.getPhoneNumbers();
         List<Name> names = person.getNames();
+        List<EmailAddress> emailAddresses = person.getEmailAddresses();
         if (!person.isEmpty()) {
           if (phoneNumbers != null)
             for (PhoneNumber phonenumbers : phoneNumbers) {
               WritableMap contactmap = Arguments.createMap();
               if (names != null) {
                 contactmap.putString("name",names.get(0).getDisplayName());
-                contactmap.putString("email",phonenumbers.getValue());
+                contactmap.putString("phoneNumber",phonenumbers.getValue());
+                if(emailAddresses!=null) {
+                  contactmap.putString("emailAddress ", emailAddresses.get(0).getValue());
+                }
                 contactsarray.pushMap(contactmap);
               }
               else {
                 contactmap.putString("name","unknown");
-                contactmap.putString("email",phonenumbers.getValue());
+                contactmap.putString("phone Number",phonenumbers.getValue());
+                if(emailAddresses!=null) {
+                  contactmap.putString("emailAddress ", emailAddresses.get(0).getValue());
+                }
                 contactsarray.pushMap(contactmap);
               }
 
@@ -175,8 +181,6 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
       nextPageToken=res.getNextPageToken();
       if(nextPageToken!=null) {
         contactList.putString("nextPageToken", nextPageToken);
-      }else {
-        contactList.putString("nextPageToken", "Reached end");
       }
       List<Person> otherContacts = res.getOtherContacts();
       for (Person person : otherContacts) {
@@ -194,7 +198,7 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
                 }
               }
               else {
-                map.putString("name","unknown");
+                map.putString("name","null");
                 map.putString("email",emailAddress.getValue());
                 array.pushMap(map);
               }

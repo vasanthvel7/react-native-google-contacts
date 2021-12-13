@@ -18,8 +18,8 @@ const GoogleContacts = NativeModules.GoogleContacts
     );
 
 export function getContacts(token) {
-  return GoogleContacts.getContacts(token);
+  return GoogleContacts.getContact(token);
 }
 export function getOtherContacts(token) {
-  return GoogleContacts.getOtherContacts(token);
+  return GoogleContacts.getOtherContact(token);
 }

@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Rawcaster</string>
-    <string name="firebase_app_id">1:165212392194:android:00153d39ed399c4309d01b</string>
-    <string name="server_client_id">749429188201-u1e40oco3dejrfcnr7algubh0k0sf01e.apps.googleusercontent.com</string>
-    <string name="server_client_secret">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</string>
+    <string name="app_name">[[APP-NAME]]</string>
+    <string name="firebase_app_id">[[APP-ID]]</string>
+    <string name="server_client_id">[[WEB-CLIENT-ID]]</string>
+    <string name="server_client_secret">[[WEB-CLIENT-SECRET]]</string>
 </resources>
