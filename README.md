@@ -1,12 +1,14 @@
 # react-native-google-contacts
 
-To fetch google contacts
+To fetch google contacts and Google Othercontacts using people Api 
+
 
 ## Installation
-
 ```sh
 npm install react-native-google-contacts
 ```
+## Project Setup
+
 
 ## Usage
 
