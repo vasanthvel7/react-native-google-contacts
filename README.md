@@ -9,6 +9,7 @@ npm install react-native-google-contacts
 ```
 ## Project Setup
 
+ > [Android Setup](AndroidGuide.md)
 
 ## Usage
 
