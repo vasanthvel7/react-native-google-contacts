@@ -1,6 +1,6 @@
 # react-native-google-contacts
 
-To fetch google contacts and Google Othercontacts using people Api 
+To fetch Google contacts and Google Othercontacts using people Api 
 
 
 ## Installation
