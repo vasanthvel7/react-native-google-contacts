@@ -14,11 +14,8 @@ import java.io.IOException;
 
 
 public class PeopleHelper {
-    public static final String TAG = "ServerAuthCodeActivity";
     private static final String APPLICATION_NAME = "GoogleContacts Example";
-
     public static PeopleService setUp(Context context, String serverAuthCode) throws IOException {
-
         HttpTransport httpTransport = new NetHttpTransport();
         String redirectUrl = "urn:ietf:wg:oauth:2.0:oob";
         GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
@@ -28,16 +25,13 @@ public class PeopleHelper {
                 context.getString(R.string.server_client_secret),
                 serverAuthCode,
                 redirectUrl).execute();
-        Log.d(TAG, "setUp: "+tokenResponse);
         // Then, create a GoogleCredential object using the tokens from GoogleTokenResponse
         GoogleCredential credential = new GoogleCredential.Builder()
                 .setClientSecrets(context.getString(R.string.server_client_id), context.getString(R.string.server_client_secret))
                 .setTransport(httpTransport)
                 .setJsonFactory(GsonFactory.getDefaultInstance())
                 .build();
-
         credential.setFromTokenResponse(tokenResponse);
-
         // credential can then be used to access Google services
         return new PeopleService.Builder(httpTransport, GsonFactory.getDefaultInstance(), credential)
                 .setApplicationName(APPLICATION_NAME)
