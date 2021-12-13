@@ -55,22 +55,20 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
   Promise EmailListReturn;
   ListOtherContactsResponse res;
   PeopleService peopleService;
-  public GoogleContactsModule(ReactApplicationContext reactContext) {
+  GoogleSignInAccount acct ;
 
+  public GoogleContactsModule(ReactApplicationContext reactContext) {
     super(reactContext);
     reactContext.addActivityEventListener(new ActivityEventListener());
     context = reactContext;
     ClientId = reactContext.getString(R.string.server_client_id);
     AppId = reactContext.getString(R.string.firebase_app_id);
-
   }
-  GoogleSignInAccount acct ;
+
   private class ActivityEventListener extends BaseActivityEventListener  {
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {
       if (requestCode == RC_GET_AUTH_CODE) {
-        Log.d(TAG, "onActivityResult: "+intent);
-        Log.d(TAG, "onActivityResult: "+activity);
         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(intent);
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
         try {
@@ -78,24 +76,19 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
           GoogleSignInAccount account = task.getResult(ApiException.class);
           GoogleSignInAccount acc = result.getSignInAccount();
           if (account == null) {
-            Log.d(TAG, "onActivityResult: no data");
+            EmailListReturn.reject("msg", "Account is Null");
           } else {
-            Log.d(TAG, "onActivityResult: data FOUND");
             acct = GoogleSignIn.getLastSignedInAccount(activity);
-            Log.d(TAG, "onActivityResult: "+acct.getServerAuthCode());
-            Log.d(TAG, "onActivityResult: "+acc.getServerAuthCode());
-            new PeoplesAsync().execute(acc.getServerAuthCode());
+            String serverAuthCode = acc.getServerAuthCode();
+            new PeoplesAsync().execute(serverAuthCode);
           }
         } catch (ApiException e) {
           EmailListReturn.reject("msg", String.valueOf(e.getStatus()));
-          Log.d(TAG, "onActivityResult: "+e.getStatus());
         }
       }
     }
   };
-  class PeoplesAsync extends AsyncTask<String, Void, List<String>> {
-
-
+  class PeoplesAsync extends AsyncTask<String, Void, List<String>>  {
     @Override
     protected void onPreExecute() {
       super.onPreExecute();
@@ -103,63 +96,42 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
     @Override
     protected List<String> doInBackground(String... params) {
       List<String> nameList = new ArrayList<>();
-      Log.d(TAG,"ACTIVITY"+params[0]);
       try {
         peopleService = PeopleHelper.setUp(context, params[0]);
         if(Type == "OtherContacts") {
           fetchOtherContacts(null);
         }
         else {
-          ListConnectionsResponse response = peopleService.people().connections()
-            .list("people/me")
-            .setPersonFields(
-              "addresses,ageRanges,birthdays,coverPhotos,emailAddresses,genders,metadata,names,nicknames,occupations,organizations,phoneNumbers,photos,urls")
-            .execute();
-          List<Person> connections = response.getConnections();
-          for (Person person : connections) {
-            if (!person.isEmpty()) {
-              List<Name> names = person.getNames();
-              List<EmailAddress> emailAddresses = person.getEmailAddresses();
-              List<PhoneNumber> phoneNumbers = person.getPhoneNumbers();
-              if (phoneNumbers != null)
-                for (PhoneNumber phoneNumber : phoneNumbers)
-                  Log.d(TAG, "doInBackground: "+phoneNumber);
-              if (emailAddresses != null)
-                for (EmailAddress emailAddress : emailAddresses)
-                  Log.d(TAG, "doInBackground: "+emailAddress);
-              if (names != null)
-                for (Name name : names)
-                  nameList.add(name.getDisplayName());
-              Log.d(TAG, "doInBackground: "+names);
-
-            } else {
-              Log.d(TAG, "no person found");
-            }
-          }
+          fetchContacts(null);
         }
-
       } catch (IOException e) {
         EmailListReturn.reject("msg", String.valueOf(e));
         e.printStackTrace();
-        Log.d(TAG, "doInBackground: "+e);
       }
-
       return nameList;
     }
   }
   public void fetchContacts(String token){
-    try {
-      WritableMap contactList = Arguments.createMap();
-      WritableArray array = new WritableNativeArray();
+    try
+    {
+      WritableMap contactsList = Arguments.createMap();
+      WritableArray contactsarray = new WritableNativeArray();
       ListConnectionsResponse response = peopleService.people().connections()
         .list("people/me")
         .setPersonFields(
           "addresses,ageRanges,birthdays,coverPhotos,emailAddresses,genders,metadata,names,nicknames,occupations,organizations,phoneNumbers,photos,urls")
+        .setPageSize(45)
         .execute();
-      List<Person> connections = response.getConnections();
-      contactList.putString("nextPageToken",response.getNextPageToken());
+
       contactnextPageToken=response.getNextPageToken();
+      if(contactnextPageToken!=null){
+        contactsList.putString("nextPageToken",response.getNextPageToken());
+      }
+      else {
+        contactsList.putString("nextPageToken","Reached end");
+      }
       List<Person> Contacts = response.getConnections();
+
       for (Person person : Contacts) {
 
         List<PhoneNumber> phoneNumbers = person.getPhoneNumbers();
@@ -167,18 +139,21 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
         if (!person.isEmpty()) {
           if (phoneNumbers != null)
             for (PhoneNumber phonenumbers : phoneNumbers) {
-              WritableMap map = Arguments.createMap();
+              WritableMap contactmap = Arguments.createMap();
               if (names != null) {
-                for (Name name : names) {
-                  map.putString("name",name.getDisplayName());
-                  map.putString("email",phonenumbers.getValue());
-                  array.pushMap(map);
-                }
+
+                Log.d(TAG, "Name: "+names.get(0).getDisplayName());
+                Log.d(TAG, "Number: "+phonenumbers.getValue());
+                contactmap.putString("name",names.get(0).getDisplayName());
+                contactmap.putString("email",phonenumbers.getValue());
+                Log.d(TAG, "doInBackground: "+contactmap);
+                contactsarray.pushMap(contactmap);
+
               }
               else {
-                map.putString("name","unknown");
-                map.putString("email",phonenumbers.getValue());
-                array.pushMap(map);
+                contactmap.putString("name","unknown");
+                contactmap.putString("email",phonenumbers.getValue());
+                contactsarray.pushString("hello");
               }
 
             }
@@ -187,19 +162,19 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
         }
 
       }
-      contactList.putArray("data",array);
-      Log.d(TAG, "fetchOtherContacts: contactList.putArray"+contactList);
-      EmailListReturn.resolve(contactList);
+      contactsList.putArray("data",contactsarray);
+      Log.d(TAG, "fetchOtherContacts: contactList.putArray"+contactsList);
+
+      EmailListReturn.resolve(contactsList);
 
 
     } catch (Exception e) {
       EmailListReturn.reject("msg", String.valueOf(e));
-      mGoogleSignInClient.signOut();
       e.printStackTrace();
       Log.d(TAG, "doInBackground: " + e);
     }
-
   }
+
   public void fetchOtherContacts(String token){
     try {
       WritableMap contactList = Arguments.createMap();
@@ -209,8 +184,11 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
         .setRequestSyncToken(true)
         .setPageToken(token)
         .execute();
-      contactList.putString("nextPageToken",res.getNextPageToken());
+
       nextPageToken=res.getNextPageToken();
+      if(nextPageToken!=null) {
+        contactList.putString("nextPageToken", nextPageToken);
+      }
       Log.d(TAG, "fetchOtherContacts: nextpagetoken"+res.getNextPageToken());
       Log.d(TAG, "fetchOtherContacts: reacttoken"+token);
       Log.d(TAG, "doInBackground: TOTALCONTACT"+res.getOtherContacts().size());
@@ -246,36 +224,20 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
       contactList.putArray("data",array);
       Log.d(TAG, "fetchOtherContacts: contactList.putArray"+contactList);
       EmailListReturn.resolve(contactList);
-
+      return;
 
     } catch (Exception e) {
       EmailListReturn.reject("msg", String.valueOf(e));
-      mGoogleSignInClient.signOut();
       e.printStackTrace();
       Log.d(TAG, "doInBackground: " + e);
     }
 
   }
+
   @ReactMethod
-  public void getContact(String nextToken) throws IOException, ServiceException {
-    validateServerClientID();
-    GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-      .requestServerAuthCode(ClientId)
-      .requestScopes(new Scope("https://www.googleapis.com/auth/contacts"))
-      .requestProfile()
-      .requestEmail()
-      .build();
-    Log.d(TAG, "getContacts: "+gso);
-    mGoogleSignInClient = GoogleSignIn.getClient(context,gso);
-    getAuthCode();
-    Type = "Contacts";
-  }
-  @ReactMethod
-  public void getOtherContact(String nextToken, Promise promise) throws IOException, ServiceException {
-    Log.d(TAG, "getOtherContact: "+nextToken);
+  public void getContact(String nextToken,Promise promise) throws IOException, ServiceException {
     if(nextToken==null) {
       if(mGoogleSignInClient!=null) {
-        Log.d(TAG, "getOtherContact: "+mGoogleSignInClient);
         mGoogleSignInClient.signOut();
       }
       EmailListReturn = promise;
@@ -286,16 +248,39 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
         .requestProfile()
         .requestEmail()
         .build();
-      Log.d(TAG, "getContacts: " + gso);
       mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
-      Log.d(TAG, "getContacts: Client" + mGoogleSignInClient);
+      getAuthCode();
+      Type = "Contacts";
+    }
+    else
+    {
+      EmailListReturn = promise;
+      fetchContacts(nextToken);
+      Type = "Contacts";
+    }
+  }
+
+  @ReactMethod
+  public void getOtherContact(String nextToken, Promise promise) throws IOException, ServiceException {
+    if(nextToken==null) {
+      if(mGoogleSignInClient!=null) {
+        mGoogleSignInClient.signOut();
+      }
+      EmailListReturn = promise;
+      validateServerClientID();
+      GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestServerAuthCode(ClientId)
+        .requestScopes(new Scope("https://www.googleapis.com/auth/contacts"), new Scope("https://www.googleapis.com/auth/contacts.other.readonly"))
+        .requestProfile()
+        .requestEmail()
+        .build();
+      mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
       getAuthCode();
       Type = "OtherContacts";
     }
     else
     {
       EmailListReturn = promise;
-      Log.d(TAG, "getOtherContactsssssssss: ");
       fetchOtherContacts(nextToken);
       Type = "OtherContacts";
     }
@@ -303,11 +288,8 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
   }
   private void getAuthCode() {
     signInIntent = mGoogleSignInClient.getSignInIntent();
-    Log.d(TAG, "getAuthCode: "+mGoogleSignInClient);
     signInIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
     currentActivity = getCurrentActivity();
-    Log.d(TAG, "getAuthCode: "+signInIntent);
     UiThreadUtil.runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -321,25 +303,15 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
     String suffix = ".apps.googleusercontent.com";
     if (!ClientId.trim().endsWith(suffix)) {
       String message = "Invalid server client ID in strings.xml, must end with " + suffix;
-      Log.w("log", message);
       Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
-    else {
-      Log.d(TAG, "validateServerClientID: login success");
-    }
+
   }
+
   @Override
   @NonNull
   public String getName() {
     return NAME;
   }
 
-
-
-  @ReactMethod
-  public void multiply(int a, int b, Promise promise) {
-    promise.resolve(a * b);
-  }
-
-  public static native int nativeMultiply(int a, int b);
 }
