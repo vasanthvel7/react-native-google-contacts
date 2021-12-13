@@ -41,7 +41,6 @@ import java.util.List;
 @ReactModule(name = GoogleContactsModule.NAME)
 public class GoogleContactsModule extends ReactContextBaseJavaModule {
   public static final String NAME = "GoogleContacts";
-  public static final String TAG = "ServerAuthCodeActivity";
   private static final int RC_GET_AUTH_CODE = 53294;
   private GoogleSignInClient mGoogleSignInClient;
   Context context;
@@ -120,9 +119,9 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
         .list("people/me")
         .setPersonFields(
           "addresses,ageRanges,birthdays,coverPhotos,emailAddresses,genders,metadata,names,nicknames,occupations,organizations,phoneNumbers,photos,urls")
+        .setPageToken(token)
         .setPageSize(45)
         .execute();
-
       contactnextPageToken=response.getNextPageToken();
       if(contactnextPageToken!=null){
         contactsList.putString("nextPageToken",response.getNextPageToken());
@@ -141,37 +140,24 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
             for (PhoneNumber phonenumbers : phoneNumbers) {
               WritableMap contactmap = Arguments.createMap();
               if (names != null) {
-
-                Log.d(TAG, "Name: "+names.get(0).getDisplayName());
-                Log.d(TAG, "Number: "+phonenumbers.getValue());
                 contactmap.putString("name",names.get(0).getDisplayName());
                 contactmap.putString("email",phonenumbers.getValue());
-                Log.d(TAG, "doInBackground: "+contactmap);
                 contactsarray.pushMap(contactmap);
-
               }
               else {
                 contactmap.putString("name","unknown");
                 contactmap.putString("email",phonenumbers.getValue());
-                contactsarray.pushString("hello");
+                contactsarray.pushMap(contactmap);
               }
 
             }
-        } else {
-          Log.d(TAG, "doInBackground:empty");
         }
-
       }
       contactsList.putArray("data",contactsarray);
-      Log.d(TAG, "fetchOtherContacts: contactList.putArray"+contactsList);
-
       EmailListReturn.resolve(contactsList);
-
-
     } catch (Exception e) {
       EmailListReturn.reject("msg", String.valueOf(e));
       e.printStackTrace();
-      Log.d(TAG, "doInBackground: " + e);
     }
   }
 
@@ -189,12 +175,7 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
       if(nextPageToken!=null) {
         contactList.putString("nextPageToken", nextPageToken);
       }
-      Log.d(TAG, "fetchOtherContacts: nextpagetoken"+res.getNextPageToken());
-      Log.d(TAG, "fetchOtherContacts: reacttoken"+token);
-      Log.d(TAG, "doInBackground: TOTALCONTACT"+res.getOtherContacts().size());
       List<Person> otherContacts = res.getOtherContacts();
-      Log.d(TAG, "fetchOtherContacts: LIST PERUSU"+res.getOtherContacts());
-      Log.d(TAG, "fetchOtherContacts: LIST otherContacts"+otherContacts);
       for (Person person : otherContacts) {
         List<EmailAddress> emailAddresses = person.getEmailAddresses();
         List<Name> names = person.getNames();
@@ -216,20 +197,15 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
               }
 
             }
-        } else {
-          Log.d(TAG, "doInBackground:empty");
         }
-
       }
       contactList.putArray("data",array);
-      Log.d(TAG, "fetchOtherContacts: contactList.putArray"+contactList);
       EmailListReturn.resolve(contactList);
       return;
 
     } catch (Exception e) {
       EmailListReturn.reject("msg", String.valueOf(e));
       e.printStackTrace();
-      Log.d(TAG, "doInBackground: " + e);
     }
 
   }
