@@ -82,20 +82,24 @@ RCT_EXPORT_METHOD(getContact:(NSString *)token
             if([userData valueForKey:@"phoneNumbers"] != NULL)
             {
               result =[[userData valueForKey:@"phoneNumbers"] valueForKey:@"value"][0];
+                for (NSDictionary *useremail in result) {
+                  NSLog(@"RESULTTTTTTTT%@",useremail);
+                  if([userData valueForKey:@"names"] != NULL)
+                  {
+                    name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
 
+                    [EmailArray  addObject:@{@"email":useremail,@"name":name}];
 
-              if([userData valueForKey:@"names"] != NULL)
-              {
-                name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
+                  }
+                  else
+                  {
 
-                [EmailArray  addObject:@{@"Phone number":result,@"name":name}];
+                    [EmailArray  addObject:@{@"email":useremail,@"name":@"null"}];
+                  }
+                }
 
-              }
-              else
-              {
-
-                [EmailArray  addObject:@{@"Phone number":result,@"name":@"Unknown"}];
-              }
+             
+             
             }
 
           }
@@ -165,19 +169,21 @@ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
       {
         result =[[userData valueForKey:@"phoneNumbers"] valueForKey:@"value"][0];
 
+          for (NSDictionary *useremail in result) {
+            NSLog(@"RESULTTTTTTTT%@",useremail);
+            if([userData valueForKey:@"names"] != NULL)
+            {
+              name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
 
-        if([userData valueForKey:@"names"] != NULL)
-        {
-          name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
+              [EmailArray  addObject:@{@"email":useremail,@"name":name}];
 
-          [EmailArray  addObject:@{@"Phone number":result,@"name":name}];
+            }
+            else
+            {
 
-        }
-        else
-        {
-
-          [EmailArray  addObject:@{@"Phone number":result,@"name":@"Unknown"}];
-        }
+              [EmailArray  addObject:@{@"email":useremail,@"name":@"null"}];
+            }
+          }
       }
 
     }
@@ -285,18 +291,21 @@ RCT_EXPORT_METHOD(getOtherContact:(NSString *)token
             result =[[userData valueForKey:@"emailAddresses"] valueForKey:@"value"][0];
 
 
-            if([userData valueForKey:@"names"] != NULL)
-            {
-              
-              name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
-              [EmailArray  addObject:@{@"email":result,@"name":name}];
+              for (NSDictionary *useremail in result) {
+                NSLog(@"RESULTTTTTTTT%@",useremail);
+                if([userData valueForKey:@"names"] != NULL)
+                {
+                  name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
 
-            }
-            else
-            {
+                  [EmailArray  addObject:@{@"email":useremail,@"name":name}];
 
-              [EmailArray  addObject:@{@"email":result,@"name":@"Unknown"}];
-            }
+                }
+                else
+                {
+
+                  [EmailArray  addObject:@{@"email":useremail,@"name":@"null"}];
+                }
+              }
           }
 
         }
@@ -368,18 +377,21 @@ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         result =[[userData valueForKey:@"emailAddresses"] valueForKey:@"value"][0];
 
 
-        if([userData valueForKey:@"names"] != NULL)
-        {
-          name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
+          for (NSDictionary *useremail in result) {
+            NSLog(@"RESULTTTTTTTT%@",useremail);
+            if([userData valueForKey:@"names"] != NULL)
+            {
+              name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
 
-          [EmailArray  addObject:@{@"email":result,@"name":name}];
+              [EmailArray  addObject:@{@"email":useremail,@"name":name}];
 
-        }
-        else
-        {
+            }
+            else
+            {
 
-          [EmailArray  addObject:@{@"email":result,@"name":@"unknown"}];
-        }
+              [EmailArray  addObject:@{@"email":useremail,@"name":@"null"}];
+            }
+          }
       }
 
     }
