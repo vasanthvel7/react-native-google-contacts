@@ -83,7 +83,7 @@ RCT_EXPORT_METHOD(getContact:(NSString *)token
             {
               result =[[userData valueForKey:@"phoneNumbers"] valueForKey:@"value"][0];
                 for (NSDictionary *useremail in result) {
-                  NSLog(@"RESULTTTTTTTT%@",useremail);
+                
                   if([userData valueForKey:@"names"] != NULL)
                   {
                     name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
@@ -170,7 +170,7 @@ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         result =[[userData valueForKey:@"phoneNumbers"] valueForKey:@"value"][0];
 
           for (NSDictionary *useremail in result) {
-            NSLog(@"RESULTTTTTTTT%@",useremail);
+         
             if([userData valueForKey:@"names"] != NULL)
             {
               name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
@@ -292,7 +292,7 @@ RCT_EXPORT_METHOD(getOtherContact:(NSString *)token
 
 
               for (NSDictionary *useremail in result) {
-                NSLog(@"RESULTTTTTTTT%@",useremail);
+               
                 if([userData valueForKey:@"names"] != NULL)
                 {
                   name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
@@ -378,7 +378,7 @@ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
 
 
           for (NSDictionary *useremail in result) {
-            NSLog(@"RESULTTTTTTTT%@",useremail);
+           
             if([userData valueForKey:@"names"] != NULL)
             {
               name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
