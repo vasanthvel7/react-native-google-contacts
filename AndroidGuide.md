@@ -53,3 +53,14 @@ signingConfigs {
     }
  }
 ```
+
+And Then
+
+```diff
+android {
++ packagingOptions {
++    exclude 'META-INF/DEPENDENCIES'
++  }
+ .....
+ }
+```
