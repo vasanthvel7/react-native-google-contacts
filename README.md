@@ -13,7 +13,7 @@ npm install react-native-google-contacts
 
  > [Android Setup](AndroidGuide.md)
  
- > [IOS Setup](AndroidGuide.md)
+ > [IOS Setup](IosGuide.md)
  
  
 ## Usage
