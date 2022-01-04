@@ -15,8 +15,8 @@
     
  ### Firebase Configuration
  
-    After Getting SHA1 Key from KeyStore file 
-    add the SHA1 Key into the Firebase Console By Folloowing This Steps:
+   After Getting SHA1 Key from KeyStore file 
+   add the SHA1 Key into the [Firebase Console](https://console.firebase.google.com/) By Folloowing This Steps:
 
         1. Sign in to Firebase and open your project.
         2. Click the Settings icon and select Project settings.
