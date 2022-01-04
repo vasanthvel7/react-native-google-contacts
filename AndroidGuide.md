@@ -10,7 +10,7 @@
   To List KeyStore File
   
    ```bash
-     keytool -list -v -keystore {keystore_name} -alias {alias_name}
+     keytool -list -v -keystore [keystore file name] -alias [keystore-alias]
    ```
     
  ### Firebase Configuration
@@ -27,10 +27,17 @@
    (gear icon in the upper left) -> Your Apps - SHA certificate fingerprints.
      
    You can get your `webClientId` from [Google Developer Console](https://console.developers.google.com/apis/credentials).
+   
    Steps To Generate OAUTH2 webClientId
-        1.First Step is Create Credentials By using OAUTH Client ID 
    
-   
+        1.First Step is Create Credentials By using OAUTH Client ID Configuration
+        2.Select Application Type As Web Application
+        3.And Then Add Your Application name an Redirect URI
+        4.WebClient Id is Generated for Your Application
+        
+    
+ ### Gradle Configuration
+ 
    If you're running your app in debug mode and not using `webClientId` or you're sure it's correct the problem might be signature (SHA-1 or SHA-256) mismatch. You need to add the following to `android/app/build.gradle`:
 
 ```diff
