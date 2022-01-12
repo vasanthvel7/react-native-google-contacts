@@ -2,25 +2,39 @@ import * as React from 'react';
 
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import {
-  multiply,
   getContacts,
   getOtherContacts,
+  SendIOSClientToken,
 } from 'react-native-google-contacts';
 
 export default function App() {
   const [result, setResult] = React.useState();
   const [contactstoken, setcontactstoken] = React.useState(null);
   const [Othercontactstoken, setOthercontactstoken] = React.useState(null);
+  var ClientId;
 
   return (
     <View style={styles.container}>
       <View style={styles.container}>
         <TouchableOpacity
           onPress={() => {
+            SendIOSClientToken(ClientId)
+              .then((res) => {
+                console.log(res, 'res');
+              })
+              .catch((e) => {
+                console.log(e, 'err');
+              });
+          }}
+        >
+          <Text>Send ClientId</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
             getContacts(contactstoken)
               .then((res) => {
                 console.log(res, 'res');
-                setcontactstoken(res.nextPageToken);
+                // setcontactstoken(res.nextPageToken);
               })
               .catch((e) => {
                 console.log(e, 'err');

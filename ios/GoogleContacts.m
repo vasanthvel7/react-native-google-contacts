@@ -6,13 +6,28 @@
 RCT_EXPORT_MODULE()
 
 NSString *accessToken;
-NSString *clientID = @"[[IOS-CLIENT-ID]]";
+NSString *clientID;
+RCT_EXPORT_METHOD(SendClientToken:(NSString *)ClientId
+                  resolver:(RCTPromiseResolveBlock)resolve
+                                    rejecter:(RCTPromiseRejectBlock)reject
+
+                  )
+{
+    if(ClientId!=NULL)
+    {
+        clientID = ClientId;
+       
+    }
+ 
+}
+
 RCT_EXPORT_METHOD(getContact:(NSString *)token
                   resolver:(RCTPromiseResolveBlock)resolve
                                     rejecter:(RCTPromiseRejectBlock)reject
 
                   )
 {
+    
   NSNumber *maxValue = @500;
   NSUInteger uiInteger = [maxValue unsignedIntegerValue];
   NSString *Contacts;
@@ -82,29 +97,27 @@ RCT_EXPORT_METHOD(getContact:(NSString *)token
             if([userData valueForKey:@"phoneNumbers"] != NULL)
             {
               result =[[userData valueForKey:@"phoneNumbers"] valueForKey:@"value"][0];
-                for (NSDictionary *useremail in result) {
+               
                 
-                  if([userData valueForKey:@"names"] != NULL)
+                  if([[userData valueForKey:@"names"] valueForKey:@"displayName"][0] != NULL)
                   {
+                      
                     name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
 
-                    [EmailArray  addObject:@{@"email":useremail,@"name":name}];
+                    [EmailArray  addObject:@{@"Mobile":result,@"name":name}];
 
                   }
                   else
                   {
 
-                    [EmailArray  addObject:@{@"email":useremail,@"name":@"null"}];
+                    [EmailArray  addObject:@{@"Mobile":result,@"name":@"null"}];
                   }
-                }
-
-             
-             
             }
 
           }
         if([dict valueForKey:@"nextPageToken"]!=NULL)
         {
+            NSLog(@"%@",pagedat);
         resolve(@{@"data":EmailArray,@"nextPageToken":pagedat});
         }
         else
@@ -118,6 +131,7 @@ RCT_EXPORT_METHOD(getContact:(NSString *)token
   }
   else
   {
+      
     Contacts = @"https://people.googleapis.com/v1/people/me/connections?pageSize=35&personFields=names,emailAddresses,phoneNumbers";
   self->_currentAuthorizationFlow =
       [OIDAuthState authStateByPresentingAuthorizationRequest:request
@@ -163,27 +177,28 @@ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
     NSMutableString *name = [[NSMutableString alloc] init];
 //
     for (NSDictionary *userData in dataArr) {
-
+       
 
       if([userData valueForKey:@"phoneNumbers"] != NULL)
       {
         result =[[userData valueForKey:@"phoneNumbers"] valueForKey:@"value"][0];
-
-          for (NSDictionary *useremail in result) {
          
-            if([userData valueForKey:@"names"] != NULL)
-            {
-              name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
+         
 
-              [EmailArray  addObject:@{@"email":useremail,@"name":name}];
+          if([[userData valueForKey:@"names"] valueForKey:@"displayName"][0] != NULL)
+          {
+              
+            name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
 
-            }
-            else
-            {
+            [EmailArray  addObject:@{@"Mobile":result,@"name":name}];
 
-              [EmailArray  addObject:@{@"email":useremail,@"name":@"null"}];
-            }
           }
+          else
+          {
+
+            [EmailArray  addObject:@{@"Mobile":result,@"name":@"null"}];
+          }
+          
       }
 
     }
@@ -196,8 +211,6 @@ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
       {
         resolve(@{@"data":EmailArray,@"nextPageToken":@"Reached End"});
       }
-
-
 
   }
 }];
@@ -252,7 +265,7 @@ RCT_EXPORT_METHOD(getOtherContact:(NSString *)token
   if(token != NULL)
   {
 
-    NSString *str = @"https://people.googleapis.com/v1/otherContacts?pageSize=65&readMask=names,emailAddresses&pageToken=";
+    NSString *str = @"https://people.googleapis.com/v1/otherContacts?pageSize=35&readMask=names,emailAddresses&pageToken=";
     otherContacts = [str stringByAppendingString:token];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:otherContacts]
       cachePolicy:NSURLRequestUseProtocolCachePolicy
@@ -291,20 +304,16 @@ RCT_EXPORT_METHOD(getOtherContact:(NSString *)token
             result =[[userData valueForKey:@"emailAddresses"] valueForKey:@"value"][0];
 
 
-              for (NSDictionary *useremail in result) {
-               
-                if([userData valueForKey:@"names"] != NULL)
-                {
-                  name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
+              if([[userData valueForKey:@"names"]valueForKey:@"displayName"][0] != NULL)
+              {
+                name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
+                [EmailArray  addObject:@{@"email":result,@"name":name}];
 
-                  [EmailArray  addObject:@{@"email":useremail,@"name":name}];
+              }
+              else
+              {
 
-                }
-                else
-                {
-
-                  [EmailArray  addObject:@{@"email":useremail,@"name":@"null"}];
-                }
+                [EmailArray  addObject:@{@"email":result,@"name":@"null"}];
               }
           }
 
@@ -324,7 +333,7 @@ RCT_EXPORT_METHOD(getOtherContact:(NSString *)token
   }
   else
   {
-    otherContacts = @"https://people.googleapis.com/v1/otherContacts?pageSize=65&readMask=names,emailAddresses";
+    otherContacts = @"https://people.googleapis.com/v1/otherContacts?pageSize=35&readMask=names,emailAddresses";
   self->_currentAuthorizationFlow =
       [OIDAuthState authStateByPresentingAuthorizationRequest:request
                                      presentingViewController:presentingViewController
@@ -377,21 +386,20 @@ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         result =[[userData valueForKey:@"emailAddresses"] valueForKey:@"value"][0];
 
 
-          for (NSDictionary *useremail in result) {
+        
            
-            if([userData valueForKey:@"names"] != NULL)
+            if([[userData valueForKey:@"names"]valueForKey:@"displayName"][0] != NULL)
             {
               name=[[userData valueForKey:@"names"] valueForKey:@"displayName"][0];
-
-              [EmailArray  addObject:@{@"email":useremail,@"name":name}];
+              [EmailArray  addObject:@{@"email":result,@"name":name}];
 
             }
             else
             {
 
-              [EmailArray  addObject:@{@"email":useremail,@"name":@"null"}];
+              [EmailArray  addObject:@{@"email":result,@"name":@"null"}];
             }
-          }
+          
       }
 
     }
@@ -404,8 +412,6 @@ completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
       {
         resolve(@{@"data":EmailArray,@"nextPageToken":@"Reached end"});
       }
-
-
 
   }
 }];
