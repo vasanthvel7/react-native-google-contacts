@@ -16,6 +16,9 @@ const GoogleContacts = NativeModules.GoogleContacts
         },
       }
     );
+export function SendAndroidClientToken(ClientId, appId, ClientSecret) {
+  return GoogleContacts.SendClientToken(ClientId, appId, ClientSecret);
+}
 export function SendIOSClientToken(ClientId) {
   return GoogleContacts.SendClientToken(ClientId);
 }

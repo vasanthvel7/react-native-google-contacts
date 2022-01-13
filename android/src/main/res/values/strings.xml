@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">[[APP-NAME]]</string>
-    <string name="firebase_app_id">[[APP-ID]]</string>
-    <string name="server_client_id">[[WEB-CLIENT-ID]]</string>
-    <string name="server_client_secret">[[WEB-CLIENT-SECRET]]</string>
-</resources>

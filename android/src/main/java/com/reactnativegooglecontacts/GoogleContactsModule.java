@@ -47,6 +47,7 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
   Activity currentActivity;
   Intent signInIntent;
   String ClientId;
+  String Clientsecret;
   String AppId;
   String Type;
   String contactnextPageToken=null;
@@ -60,8 +61,6 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
     super(reactContext);
     reactContext.addActivityEventListener(new ActivityEventListener());
     context = reactContext;
-    ClientId = reactContext.getString(R.string.server_client_id);
-    AppId = reactContext.getString(R.string.firebase_app_id);
   }
 
   private class ActivityEventListener extends BaseActivityEventListener  {
@@ -96,7 +95,7 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
     protected List<String> doInBackground(String... params) {
       List<String> nameList = new ArrayList<>();
       try {
-        peopleService = PeopleHelper.setUp(context, params[0]);
+        peopleService = PeopleHelper.setUp(context, params[0],ClientId,Clientsecret);
         if(Type == "OtherContacts") {
           fetchOtherContacts(null);
         }
@@ -215,6 +214,12 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
       e.printStackTrace();
     }
 
+  }
+  @ReactMethod
+  public void SendClientToken(String clientId,String appId,String ClientSecret,Promise promise) throws IOException, ServiceException {
+    ClientId=clientId;
+    AppId=appId;
+    Clientsecret=ClientSecret;
   }
 
   @ReactMethod

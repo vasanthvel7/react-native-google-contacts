@@ -11,14 +11,18 @@ export default function App() {
   const [result, setResult] = React.useState();
   const [contactstoken, setcontactstoken] = React.useState(null);
   const [Othercontactstoken, setOthercontactstoken] = React.useState(null);
-  var ClientId;
+  var IOSClientId, AndroidClientId, AndroidappId, AndroidClientSecret;
 
   return (
     <View style={styles.container}>
       <View style={styles.container}>
         <TouchableOpacity
           onPress={() => {
-            SendIOSClientToken(ClientId)
+            SendAndroidClientToken(
+              AndroidClientId,
+              AndroidappId,
+              AndroidClientSecret
+            )
               .then((res) => {
                 console.log(res, 'res');
               })
@@ -27,7 +31,20 @@ export default function App() {
               });
           }}
         >
-          <Text>Send ClientId</Text>
+          <Text>Send AndroidClientId</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            SendIOSClientToken(IOSClientId)
+              .then((res) => {
+                console.log(res, 'res');
+              })
+              .catch((e) => {
+                console.log(e, 'err');
+              });
+          }}
+        >
+          <Text>Send IOSClientId</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
