@@ -1,6 +1,6 @@
 {
-  "name": "react-native-google-contacts",
-  "version": "0.1.0",
+  "name": "react-native-google-contacts-api",
+  "version": "0.0.1",
   "description": "To fetch google contacts",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -36,7 +36,10 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/vasanthvel7/react-native-google-contacts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vasanthvel7/react-native-google-contacts.git"
+  },
   "author": "Vasanthvip8 <vasanthvip8@gmail.com> (https://github.com/vasanthvel7)",
   "license": "MIT",
   "bugs": {
@@ -147,5 +150,8 @@
   "dependencies": {
     "g": "^2.0.1",
     "react-native-cli": "^2.0.1"
+  },
+  "directories": {
+    "example": "example"
   }
 }

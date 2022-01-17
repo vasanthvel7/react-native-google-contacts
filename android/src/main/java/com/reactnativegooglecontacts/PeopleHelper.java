@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class PeopleHelper {
     private static final String APPLICATION_NAME = "GoogleContacts Example";
-    public static PeopleService setUp(Context context, String serverAuthCode,String clientSecret,String clientId) throws IOException {
+    public static PeopleService setUp(Context context, String serverAuthCode,String clientId,String clientSecret) throws IOException {
         HttpTransport httpTransport = new NetHttpTransport();
         String redirectUrl = "urn:ietf:wg:oauth:2.0:oob";
         GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
