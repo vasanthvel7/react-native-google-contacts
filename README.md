@@ -21,7 +21,7 @@ npm install react-native-google-contacts-api
 ### 1.Android Client ID setup
 
 ```js
-import { SendAndroidClientToken } from "react-native-google-contacts";
+import { SendAndroidClientToken } from "react-native-google-contacts-api";
 
 // ...
 
@@ -38,7 +38,7 @@ SendAndroidClientToken(ClientId, appId, ClientSecret)
 ### 2.IOS Client ID setup
 
 ```js
-import { SendIOSClientToken } from "react-native-google-contacts";
+import { SendIOSClientToken } from "react-native-google-contacts-api";
 
 // ...
 
@@ -57,7 +57,7 @@ This method is to be used to find out whether some user Contacts. It returns a p
 
  
 ```js
-import { getContacts } from "react-native-google-contacts";
+import { getContacts } from "react-native-google-contacts-api";
 
 // ...
 
@@ -75,7 +75,7 @@ This method is to be used to find out whether some user OtherContacts. It return
 
  
 ```js
-import { getOtherContacts } from "react-native-google-contacts";
+import { getOtherContacts } from "react-native-google-contacts-api";
 
 // ...
 
