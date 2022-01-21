@@ -6,7 +6,7 @@
 RCT_EXPORT_MODULE()
 
 NSString *accessToken;
-NSString *clientID;
+NSString *clientID = @"[[CLIENT-ID]]";
 RCT_EXPORT_METHOD(SendClientToken:(NSString *)ClientId
                   resolver:(RCTPromiseResolveBlock)resolve
                                     rejecter:(RCTPromiseRejectBlock)reject
@@ -27,6 +27,9 @@ RCT_EXPORT_METHOD(getContact:(NSString *)token
 
                   )
 {
+
+   
+        
     
   NSNumber *maxValue = @500;
   NSUInteger uiInteger = [maxValue unsignedIntegerValue];

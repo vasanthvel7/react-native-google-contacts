@@ -1,91 +1,87 @@
-# react-native-google-contacts-api
+# react-native-google-contact-api
 
-To fetch Google contacts and Google Othercontacts using people Api 
-
+To fetch Google contacts and Google Othercontacts using people Api
 
 ## Installation
+
 ```sh
-npm install react-native-google-contacts-api
+npm install react-native-google-contact-api
 ```
+
 ## Project Setup
 
- After Installation Follow the Guide for initial setup
+After Installation Follow the Guide for initial setup
 
- > [Android Setup](AndroidGuide.md)
- 
- > [IOS Setup](IosGuide.md)
- 
- 
+> [Android Setup](AndroidGuide.md)
+
+> [IOS Setup](IosGuide.md)
+
 ## Initial Setup(Authentication)
 
 ### 1.Android Client ID setup
 
 ```js
-import { SendAndroidClientToken } from "react-native-google-contacts-api";
+import { SendAndroidClientToken } from 'react-native-google-contact-api';
 
 // ...
 
 SendAndroidClientToken(ClientId, appId, ClientSecret)
-.then((response)=>{
-  //statement
-})
-.catch((error)=>{
- //Error Response
-})
+  .then((response) => {
+    //statement
+  })
+  .catch((error) => {
+    //Error Response
+  });
 ```
-
 
 ### 2.IOS Client ID setup
 
 ```js
-import { SendIOSClientToken } from "react-native-google-contacts-api";
+import { SendIOSClientToken } from 'react-native-google-contact-api';
 
 // ...
 
 SendIOSClientToken(ClientId)
-.then((response)=>{
-  //statement
-})
-.catch((error)=>{
- //Error Response
-})
+  .then((response) => {
+    //statement
+  })
+  .catch((error) => {
+    //Error Response
+  });
 ```
 
 ## Usage
 
 This method is to be used to find out whether some user Contacts. It returns a promise which resolves Currently Signed in user Contacts and nextpageToken. If Client Authentication is Invalid it returns a promise which rejects Authentication Error.
 
- 
 ```js
-import { getContacts } from "react-native-google-contacts-api";
+import { getContacts } from 'react-native-google-contact-api';
 
 // ...
 
-getContacts(Tokenvalue)      //In firstpage Tokenvalue must be null && In Secondpage Send nextpageToken as Tokenvalue     
-.then((response)=>{
-  //statement
-})
-.catch((error)=>{
- //Error Response
-})
+getContacts(Tokenvalue) //In firstpage Tokenvalue must be null && In Secondpage Send nextpageToken as Tokenvalue
+  .then((response) => {
+    //statement
+  })
+  .catch((error) => {
+    //Error Response
+  });
 ```
-
 
 This method is to be used to find out whether some user OtherContacts. It returns a promise which resolves Currently Signed in user OtherContacts and nextpageToken. If Client Authentication is Invalid it returns a promise which rejects Authentication Error.
 
- 
 ```js
-import { getOtherContacts } from "react-native-google-contacts-api";
+import { getOtherContacts } from 'react-native-google-contact-api';
 
 // ...
 
-getOtherContacts(Tokenvalue)      //In firstpage Tokenvalue must be null && In Secondpage Send nextpageToken as Tokenvalue     
-.then((response)=>{
-  //statement
-})
-.catch((error)=>{
- //Error Response
-})
+getOtherContacts(Tokenvalue) //In firstpage Tokenvalue must be null && In Secondpage Send nextpageToken as Tokenvalue
+  .then((response) => {
+    //statement
+  })
+  .catch((error) => {
+    //Error Response
+  });
 ```
 
 ## Contributing

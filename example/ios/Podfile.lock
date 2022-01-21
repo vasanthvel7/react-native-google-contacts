@@ -198,7 +198,7 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
-  - react-native-google-contacts (0.1.0):
+  - react-native-google-contacts (0.1.1):
     - AppAuth
     - GoogleSignIn
     - GTMAppAuth
@@ -381,7 +381,7 @@ SPEC CHECKSUMS:
   React-jsi: a0418934cf48f25b485631deb27c64dc40fb4c31
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
-  react-native-google-contacts: 95b9c76cc9bfccd91593d020623523bbf92a2483
+  react-native-google-contacts: 9a0260835cc8d4fe78ba8426f658ed372c71cf2f
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
   React-RCTBlob: a97d378b527740cc667e03ebfa183a75231ab0f0

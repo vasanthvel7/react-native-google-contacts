@@ -1,7 +1,7 @@
 {
-  "name": "react-native-google-contacts-api",
-  "version": "0.0.1",
-  "description": "To fetch google contacts",
+  "name": "react-native-google-contact-api",
+  "version": "1.0.0",
+  "description": "To fetch Google Contacts and Google OtherContacts",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
@@ -152,6 +152,7 @@
     "react-native-cli": "^2.0.1"
   },
   "directories": {
-    "example": "example"
+    "example": "example",
+    "lib": "lib"
   }
 }

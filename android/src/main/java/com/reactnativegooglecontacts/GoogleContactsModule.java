@@ -114,13 +114,28 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
     {
       WritableMap contactsList = Arguments.createMap();
       WritableArray contactsarray = new WritableNativeArray();
-      ListConnectionsResponse response = peopleService.people().connections()
+      ListConnectionsResponse response;
+     
+         if(token==null)
+      {
+         response = peopleService.people().connections()
+        .list("people/me")
+        .setPersonFields(
+          "addresses,ageRanges,birthdays,coverPhotos,emailAddresses,genders,metadata,names,nicknames,occupations,organizations,phoneNumbers,photos,urls")
+        .setPageSize(45)
+        .execute();
+     
+      }
+      else
+      {
+        response = peopleService.people().connections()
         .list("people/me")
         .setPersonFields(
           "addresses,ageRanges,birthdays,coverPhotos,emailAddresses,genders,metadata,names,nicknames,occupations,organizations,phoneNumbers,photos,urls")
         .setPageToken(token)
         .setPageSize(45)
         .execute();
+      }
       contactnextPageToken=response.getNextPageToken();
       if(contactnextPageToken!=null){
         contactsList.putString("nextPageToken",response.getNextPageToken());
@@ -171,11 +186,20 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
     try {
       WritableMap contactList = Arguments.createMap();
       WritableArray array = new WritableNativeArray();
-      res = peopleService.otherContacts().list()
-        .setReadMask("emailAddresses,names")
-        .setRequestSyncToken(true)
-        .setPageToken(token)
-        .execute();
+      if(token==null)
+      {
+        res = peopleService.otherContacts().list()
+                .setReadMask("emailAddresses,names")
+                .execute();
+      }
+      else
+      {
+        res = peopleService.otherContacts().list()
+                .setReadMask("emailAddresses,names")
+                .setPageToken(token)
+                .execute();
+      }
+
 
       nextPageToken=res.getNextPageToken();
       if(nextPageToken!=null) {
@@ -197,7 +221,7 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
                 }
               }
               else {
-                map.putString("name","null");
+                map.putString("name","Unknown");
                 map.putString("email",emailAddress.getValue());
                 array.pushMap(map);
               }
@@ -220,25 +244,28 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
     ClientId=clientId;
     AppId=appId;
     Clientsecret=ClientSecret;
+    promise.resolve("Authentication Success");
   }
 
   @ReactMethod
   public void getContact(String nextToken,Promise promise) throws IOException, ServiceException {
+    if(ClientId != null &&AppId != null && Clientsecret!=null)
+    {
     if(nextToken==null) {
       if(mGoogleSignInClient!=null) {
         mGoogleSignInClient.signOut();
       }
       EmailListReturn = promise;
-      validateServerClientID();
+
       GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestServerAuthCode(ClientId)
         .requestScopes(new Scope("https://www.googleapis.com/auth/contacts"), new Scope("https://www.googleapis.com/auth/contacts.other.readonly"))
         .requestProfile()
         .requestEmail()
         .build();
-      mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
-      getAuthCode();
-      Type = "Contacts";
+         mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
+        getAuthCode();
+        Type = "Contacts";
     }
     else
     {
@@ -246,16 +273,22 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
       fetchContacts(nextToken);
       Type = "Contacts";
     }
+    }
+    else
+    {
+      promise.reject("msg","Authentication Failed");
+    }
   }
 
   @ReactMethod
   public void getOtherContact(String nextToken, Promise promise) throws IOException, ServiceException {
+    if(ClientId != null &&AppId != null && Clientsecret!=null)
+    {
     if(nextToken==null) {
       if(mGoogleSignInClient!=null) {
         mGoogleSignInClient.signOut();
       }
       EmailListReturn = promise;
-      validateServerClientID();
       GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestServerAuthCode(ClientId)
         .requestScopes(new Scope("https://www.googleapis.com/auth/contacts"), new Scope("https://www.googleapis.com/auth/contacts.other.readonly"))
@@ -272,7 +305,11 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
       fetchOtherContacts(nextToken);
       Type = "OtherContacts";
     }
-
+    }
+    else
+    {
+      promise.reject("msg","Authentication Failed");
+    }
   }
   private void getAuthCode() {
     signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -287,14 +324,7 @@ public class GoogleContactsModule extends ReactContextBaseJavaModule {
     });
 
   }
-  private void validateServerClientID() {
-    String suffix = ".apps.googleusercontent.com";
-    if (!ClientId.trim().endsWith(suffix)) {
-      String message = "Invalid server client ID in strings.xml, must end with " + suffix;
-      Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-    }
 
-  }
 
   @Override
   @NonNull

@@ -5,7 +5,7 @@ import {
   getContacts,
   getOtherContacts,
   SendIOSClientToken,
-} from 'react-native-google-contacts';
+} from '../../src/index';
 
 export default function App() {
   const [result, setResult] = React.useState();
